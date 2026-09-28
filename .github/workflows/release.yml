@@ -1,0 +1,45 @@
+name: Validate release source
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-source-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate public-source release input
+    runs-on: windows-2022
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 10.0.302
+      - name: Verify public-source boundary
+        shell: powershell
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\eng\Test-PublicSource.ps1
+      - name: Verify localization
+        shell: powershell
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\eng\Test-Localization.ps1
+      - name: Restore and build with the public development key
+        shell: pwsh
+        run: |
+          dotnet restore YtecWifiCapsule.slnx
+          if ($LASTEXITCODE -ne 0) { throw 'Restore failed.' }
+          dotnet build YtecWifiCapsule.slnx -t:Rebuild -c Release --no-restore
+          if ($LASTEXITCODE -ne 0) { throw 'Build failed.' }
+      - name: Run synthetic regression tests
+        shell: pwsh
+        run: |
+          & .\tests\Ytec.WifiCapsule.Tests\bin\Release\net461\Ytec.WifiCapsule.Tests.exe
+          if ($LASTEXITCODE -ne 0) { throw 'Synthetic tests failed.' }
+
+# Official signing and publication are separate, owner-approved local steps.
+# No secret key, binary artifact upload, tag trigger or Release write permission.
