@@ -1,7 +1,7 @@
 Y-TEC Wi-Fi Capsule Third-Party Notices
 
 ===============================================================================
-Newtonsoft.Json 13.0.3
+Newtonsoft.Json 13.0.4
 https://www.newtonsoft.com/json
 License: MIT
 Production dependency. Redistributed as Newtonsoft.Json.dll.
