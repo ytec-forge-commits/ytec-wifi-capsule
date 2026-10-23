@@ -24,6 +24,6 @@ The manuals retain the project's existing Apache-2.0 and NOTICE conditions.
 
 ## Runtime Dependency
 
-Newtonsoft.Json 13.0.3 is distributed under the MIT license. Its license is included
+Newtonsoft.Json 13.0.4 is distributed under the MIT license. Its license is included
 in `THIRD-PARTY-NOTICES.txt`; the upstream binary signature is retained.
 Build/test dependencies are not included in the portable download.
